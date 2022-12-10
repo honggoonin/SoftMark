@@ -20,8 +20,8 @@ We provide a handy build script (`build.sh`) to automate the entire toolchain in
 * python packages (`protobuf`, `pyelftools`, `capstone`, `r2pipe`, and `pathlib`) installation
 
 ### Notes for SofMark build
-The build script:
-* CCR requires at least 8GB memory and 30GB HDD space
+The CCR build script:
+* requires at least 8GB memory and 30GB HDD space
 * Installs `protoc`, `shuffleInfo.so`, and other necessary packages on your system
 * Does not install the compiler and linker, but creates symbolic links instead
 * Changes the default linker to `ld.gold` at build time, and to `ld-new` at the end
@@ -41,14 +41,15 @@ Status: Downloaded newer image for ubuntu:16.04
 
 $ docker build -t softmark .
 ... (omitted)
-CCR C Compiler   : /usr/local/bin/ccr
-CCR C++ Compiler : /usr/local/bin/ccr++
-CCR Gold Linker  : /CCR/binutils-2.27/gold/ld-new
-CCR Randomizer   : /CCR/randomizer/prander.py
+CCR C Compiler    : /usr/local/bin/ccr
+CCR C++ Compiler  : /usr/local/bin/ccr++
+CCR Gold Linker   : /SoftMark/binutils-2.27/gold/ld-new
+SoftMark Embedder : /SoftMark/randomizer/prander.py
+SoftMark Extractor: /SoftMark/extractor/pextractor.py
 
 $ docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
-softmark            latest              3aa07abd6ae8        29 minutes ago      30.3GB
+softmark            latest              b96f145a6e83        29 minutes ago      30.3GB
 ubuntu              16.04               b6f507652425        15 months ago       112MB
 ```
 
@@ -56,7 +57,7 @@ Once the build has been successful, launch the Docker image
 to test out SoftMark.
 ```
 $ docker run --rm -it softmark:latest /bin/bash
-root@c1aa9c064785:/SoftMark# 
+root@cd8dead1de94:/SoftMark# 
 ```
 
 Or you can just download the images that everything is ready to use.
@@ -79,6 +80,9 @@ $ cd ./examples && tar -zxvf vsftpd-2.3.4.tar.gz
 $ cd ./vsftpd-2.3.4 && make
 $ cp vsftpd ..
 $ cd ../..
+```
+
+```
 $ python ./randomizer/prander.py -b ./examples/vsftpd
 
 
