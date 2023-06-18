@@ -16,7 +16,7 @@ try:
     from elftools.elf.relocation import RelocationSection
     from elftools.elf.sections import SymbolTableSection
     from elftools.elf.dynamic import DynamicSection
-except ImportError, e:
+except ImportError as e:
     logging.critical("You need to install the following packages: elftools")
     sys.exit(1)
 
@@ -97,16 +97,16 @@ class ELFParser:
         self.extractSectionVAs()
 
     def readElfHdr(self):
-        print 'ELF Header (%s)' % self.fn
+        print('ELF Header (%s)' % self.fn)
         elf_info = self.elf._parse_elf_header()
 
         for i in sorted(self.struct_elf.keys()):
             elf_decr = self.struct_elf[i].ljust(35)
             if isinstance(elf_info[i], int):
                 val = '(' + hex(elf_info[i]) + ')'
-                print "  %s: %s%s" % (elf_decr, elf_info[i], val.rjust(15))
+                print("  %s: %s%s" % (elf_decr, elf_info[i], val.rjust(15)))
             else:
-                print "  %s: %s" % (elf_decr, elf_info[i])
+                print("  %s: %s" % (elf_decr, elf_info[i]))
 
     def readRelocations(self):
         """
@@ -121,14 +121,14 @@ class ELFParser:
         for reloc_name in reloc_section_names:
             rel = self.elf.get_section_by_name(reloc_name)
             if isinstance(rel, RelocationSection):
-                print 'Relocation Section: %s (%d)' % (reloc_name, rel.num_relocations())
+                print('Relocation Section: %s (%d)' % (reloc_name, rel.num_relocations()))
                 # Lookup all entry attributes
                 for i, r in enumerate(rel.iter_relocations()):
-                    print '\t[%3d] Offset + Addend: %s +' % (i+1, hex(r['r_offset'])),
+                    print('\t[%3d] Offset + Addend: %s +' % (i+1, hex(r['r_offset'])), end=' ')
                     if 'rela' in reloc_name:
-                        print r['r_addend'],
-                    print '\tInfo (Type, Symbol): %s (%s, %s)' \
-                          % (hex(r['r_info']), self.struct_relocation[r['r_info_type']],r['r_info_sym'])
+                        print(r['r_addend'], end=' ')
+                    print('\tInfo (Type, Symbol): %s (%s, %s)' \
+                          % (hex(r['r_info']), self.struct_relocation[r['r_info_type']],r['r_info_sym']))
 
     def readSections(self):
         """ Read all sections in a given ELF binary """
@@ -136,21 +136,21 @@ class ELFParser:
             section = self.elf.get_section(s)
 
             # A section type is in its header, but the name was decoded and placed in a public attribute.
-            print '  [%2d] Section %s' %(s, section.name)
+            print('  [%2d] Section %s' %(s, section.name))
             for s in sorted(self.struct_section.keys()):
                 sec_desc = self.struct_section[s].ljust(25)
-                print '\t%s : %s' % (sec_desc, section[s])
+                print('\t%s : %s' % (sec_desc, section[s]))
 
             # Case: a section table contains a symbol table section
             if isinstance(section, SymbolTableSection):
                 for sym_no in range(section.num_symbols()):
                     symbol = section.get_symbol(sym_no)
-                    print "      [%2d] Symbol: %s (Ty=%-7s, Bind=%-6s, Sym_Other=%-7s, Shndx=%4s, Val=0x%x, Sz=0x%x)" % \
+                    print("      [%2d] Symbol: %s (Ty=%-7s, Bind=%-6s, Sym_Other=%-7s, Shndx=%4s, Val=0x%x, Sz=0x%x)" % \
                           (sym_no, symbol.name, symbol['st_info']['type'], symbol['st_info']['bind'],
-                           symbol['st_other']['visibility'], symbol['st_shndx'], symbol['st_value'], symbol['st_size'])
+                           symbol['st_other']['visibility'], symbol['st_shndx'], symbol['st_value'], symbol['st_size']))
 
         sec_cnt = self.elf.num_sections()
-        print 'Found %s sections' % sec_cnt
+        print('Found %s sections' % sec_cnt)
         for s in range(sec_cnt):
             sectionInfo(s)
 
@@ -165,7 +165,7 @@ class ELFParser:
         return self.section_ranges[sn][0]
 
     def getSectionByVA(self, va):
-        secNames = self.section_ranges.keys()
+        secNames = list(self.section_ranges.keys())
         for sn in secNames:
             s, e = self.section_ranges[sn]
             if s <= va < e:
@@ -181,7 +181,7 @@ class ELFParser:
 if __name__ == '__main__':
     import os
     if len(sys.argv) != 2:
-        print "Usage: %s [ELF file to parse]" % (sys.argv[0])
+        print("Usage: %s [ELF file to parse]" % (sys.argv[0]))
         sys.exit(1)
     else:
         f = sys.argv[1]
@@ -190,4 +190,4 @@ if __name__ == '__main__':
             ep.readSections()
             ep.readRelocations()
         else:
-            print "No such file!"
+            print("No such file!")

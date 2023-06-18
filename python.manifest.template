@@ -1,0 +1,67 @@
+# Python3 manifest example
+
+loader.entrypoint = "file:{{ gramine.libos }}"
+libos.entrypoint = "{{ entrypoint }}"
+
+loader.log_level = "{{ log_level }}"
+
+loader.env.LD_LIBRARY_PATH = "/home/.virtualenvs/env2/lib:/lib:{{ arch_libdir }}:/usr/lib:/usr/{{ arch_libdir }}"
+
+#loader.env.LD_PRELOAD = "libsecret_prov_attest.so"
+#loader.env.SECRET_PROVISION_CONSTRUCTOR = "1"
+#loader.env.SECRET_PROVISION_SET_PF_KEY = "1"
+#loader.env.SECRET_PROVISION_CA_CHAIN_PATH = "ssl/ca.crt"
+#loader.env.SECRET_PROVISION_SERVERS = "localhost:4433"
+
+loader.insecure__use_cmdline_argv = true
+loader.insecure__use_host_env = true
+
+loader.pal_internal_mem_size = "1G"
+
+sys.enable_sigterm_injection = true
+fs.mounts = [
+  { path = "/lib", uri = "file:{{ gramine.runtimedir() }}" },
+  { path = "{{ arch_libdir }}", uri = "file:{{ arch_libdir }}" },
+  { path = "/usr", uri = "file:/usr" },
+  #{ path = "{{ python.stdlib }}", uri = "file:{{ python.stdlib }}" },
+  #{ path = "{{ python.distlib }}", uri = "file:{{ python.distlib }}" },
+  { path = "/home/.virtualenvs/env2/lib/python2.7/site-packages", uri = "file:/home/.virtualenvs/env2/lib/python2.7/site-packages" },
+  { path = "/home/.virtualenvs/env2/lib/python2.7", uri = "file:/home/.virtualenvs/env2/lib/python2.7" },
+  { path = "/examples", uri = "file:examples" },
+]
+
+sgx.debug = true
+sgx.nonpie_binary = true
+sgx.enclave_size = "4G"
+
+sys.stack.size = "128M"
+sgx.thread_num = 32
+
+sgx.remote_attestation = "none"
+
+sgx.trusted_files = [
+  "file:{{ gramine.libos }}",
+  "file:{{ entrypoint }}",
+  "file:{{ gramine.runtimedir() }}/",
+  "file:{{ arch_libdir }}/",
+  "file:/usr/{{ arch_libdir }}/",
+  "file:{{ python.stdlib }}/",
+  "file:{{ python.distlib }}/",
+  "file:/home/.virtualenvs/env2/lib/python2.7/site-packages/",
+  "file:/home/.virtualenvs/env2/lib/python2.7/",
+]
+
+sgx.allowed_files = [
+  "file:randomizer/binaryBuilder.py",
+  "file:randomizer/constants.py",
+  "file:randomizer/elfParser.py",
+  "file:randomizer/reorderEngine.py",
+  "file:randomizer/reorderInfo.py",
+  "file:randomizer/report.py",
+  "file:randomizer/shuffleInfo_pb2.py",
+  "file:randomizer/shuffleInfoReader.py",
+  "file:randomizer/binaryBuilder.py",
+  "file:randomizer/unit.py",
+  "file:randomizer/util.py",
+  "file:examples",
+]

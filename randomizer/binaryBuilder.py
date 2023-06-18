@@ -48,7 +48,7 @@ class BinaryBuilder():
         self.updatedSections = list()
 
         self.origBin = self.EP.bin  # Original Binary Dump
-        self.instBin = ''           # Instrumented Binary
+        self.instBin = b''           # Instrumented Binary
 
         # Define a simple function for packing/unpacking
         self.PK  = lambda f, val: struct.pack(self.fmt[f], val)
@@ -180,7 +180,10 @@ class BinaryBuilder():
               Still using disassembler is undesirable, thus do the check (0x3d), which looks too hacky.... 
             '''
             mainAddr = self.UPK(FMT.INT, textSection[mainOffset: mainOffset + MAINOFFSZ])
-            is_main_rip_relative = ord(textSection[mainOffset - 1]) == 0x3d
+            #print(textSection[mainOffset - 1])
+            #is_main_rip_relative = ord(textSection[mainOffset - 1]) == 0x3d
+            is_main_rip_relative = textSection[mainOffset - 1] == 0x3d
+            
             if is_main_rip_relative:
                 adjust_val = self.EI.entryPoint + mainOffset + MAINOFFSZ
                 mainAddr =  mainAddr + adjust_val
@@ -535,7 +538,8 @@ class BinaryBuilder():
                 break
 
             # We check the version info of each entry, the binary from LLVM is 1 iff CIE
-            ver = self.UPK(FMT.UCHAR, entry[8])
+            #ver = self.UPK(FMT.UCHAR, entry[8])
+            ver = entry[8]
             if ver == 1 or ver == 3:
                 self.instBin += entry
                 cie += 1
@@ -639,9 +643,13 @@ class BinaryBuilder():
 
         # Get version, fde_count_enc and table_enc
         # We do not care about eh_frame_ptr_enc because eh_frame is out of randomization range
-        ver = self.UPK(FMT.UCHAR, sectionChunk[0])
-        fdeVal, fdeTy = readEncodingType(self.UPK(FMT.UCHAR, sectionChunk[2]))
-        tblVal, tblTy = readEncodingType(self.UPK(FMT.UCHAR, sectionChunk[3]))
+        #ver = self.UPK(FMT.UCHAR, sectionChunk[0])
+        ver = sectionChunk[0]
+        #fdeVal, fdeTy = readEncodingType(self.UPK(FMT.UCHAR, sectionChunk[2]))
+        #tblVal, tblTy = readEncodingType(self.UPK(FMT.UCHAR, sectionChunk[3]))
+        fdeVal, fdeTy = readEncodingType(sectionChunk[2])
+        tblVal, tblTy = readEncodingType(sectionChunk[3])
+
 
         if ver != 1:
             logging.critical("   [%s] Wrong version." % secName)
@@ -735,8 +743,8 @@ class BinaryBuilder():
                             elif highpc_attr_class == 'constant':
                                 highpc = lowpc + highpc_attr.value
                             else:
-                                print('Error: invalid DW_AT_high_pc class:',
-                                      highpc_attr_class)
+                                print(('Error: invalid DW_AT_high_pc class:',
+                                      highpc_attr_class))
                                 continue
 
                             if lowpc <= address <= highpc:
@@ -850,6 +858,9 @@ class BinaryBuilder():
                       % (phOff, phOff + phSz, phSz, ehSz + phSz))
 
         # (1) Build ELF/Program Header
+        #print(type(self.instBin))
+        #print('back')
+        #print(self.origBin[0:ehSz + phSz])
         self.instBin += self.origBin[0:ehSz + phSz]
 
         # (2) Instrument the sections in order
@@ -953,7 +964,7 @@ class BinaryBuilder():
         self.memo.instBinName = newBin
 
         # Change the permission to be executable
-        os.chmod(newBin, 0755)
+        os.chmod(newBin, 0o755)
 
         '''
         # Compress the metadata (~80% compression rate empirically)

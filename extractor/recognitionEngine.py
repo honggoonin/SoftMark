@@ -2,7 +2,7 @@
 # Copyright(c) 2021, Honggoo Kang
 #####################################################################
 #  SoftMark: Software Watermarking via a Binary Function Relocation #
-#   (In the Annual Computer SEcurity Applications Conference 2021)  # 
+#   (In the Annual Computer Security Applications Conference 2021)  # 
 #                                                                   #
 #  Author: Honggoo Kang <honggoonin@korea.ac.kr>                    #
 #          Cybersecurity@Korea University                           #
@@ -69,7 +69,7 @@ def findFunc(target_path, Func_RErules, sectionsize):
             cnt = 0
             if strInstpatterns in BBL_cache:
                 for BBL in BBL_cache[strInstpatterns]:
-                    allBBLs.append((bbi, (long(BBL[0]), long(BBL[1]))))
+                    allBBLs.append((bbi, (int(BBL[0]), int(BBL[1]))))
                     cnt += 1
 
             else:

@@ -180,7 +180,11 @@ def deserializeInfo(ri):
 
     def __getDataSet(fixups, kind):
         if len(fixups) > 0:
-            return list(zip(*fixups)[kind])
+            #print(zip(*fixups))
+            #print(list(zip(*fixups)))
+            #print(kind)
+            return list(zip(*fixups))[kind]
+            #return list(zip(*fixups)[kind])
         else:
             return []
 
@@ -197,7 +201,7 @@ def deserializeInfo(ri):
     dataset['obj_src_type'] = srcTypes.src_type
 
     logging.info('\tNumber of Jump Tables : %d' %
-                 len(filter(lambda x: x!=0, dataset['fixup_num_jt_entries'])))
+                 len([x for x in dataset['fixup_num_jt_entries'] if x!=0]))
 
     return dataset
 
@@ -260,13 +264,13 @@ def readOnly(outFile, randInfo):
         logging.critical("The metadata does not contain the type of an object (obsolete ver?)")
 
     out.close()
-    print "\tMain Addr Offset   : 0x%04x" % obj.main_addr_offset
-    print "\tRand Object Offset : 0x%04x" % obj.rand_obj_offset
-    print "\tRand Object Size   : 0x%04x" % obj.obj_sz
-    print "\tTotal BBLs in .text: %d" % len(bblLayout)
+    print("\tMain Addr Offset   : 0x%04x" % obj.main_addr_offset)
+    print("\tRand Object Offset : 0x%04x" % obj.rand_obj_offset)
+    print("\tRand Object Size   : 0x%04x" % obj.obj_sz)
+    print("\tTotal BBLs in .text: %d" % len(bblLayout))
     #print "\tTotal BBLs in .text: %d (Fallthrough = %d, %.2f%%)" \
     #      % (len(bblLayout), fallThroughCtr, fallThroughCtr / float(len(bblLayout)) * 100)
-    print "Wrote the metadata to %s..." % outFile
+    print("Wrote the metadata to %s..." % outFile)
 
 def read(metaData, hasRandSection):
     """
@@ -280,7 +284,7 @@ def read(metaData, hasRandSection):
         try:
             randInfo.ParseFromString(gzip.open(metaData, "rb").read())
         except IOError:
-            print "Found a .rand section but not gzipped. Check out the CCR linker!"
+            print("Found a .rand section but not gzipped. Check out the CCR linker!")
     else:
         randInfo.ParseFromString(open(metaData, "rb").read())
     return deserializeInfo(randInfo)
@@ -299,7 +303,7 @@ if __name__ == '__main__':
 
     def getMetadata(param):
         if isMetadata(param):
-            print "Found the metadata at %s" % param
+            print("Found the metadata at %s" % param)
             return param
         if isELF(param):
             if os.path.exists(C.METADATA_PATH):
@@ -319,10 +323,10 @@ if __name__ == '__main__':
         try:
             bin_str = gzip.open(fn, "rb").read() if isGzipped(fn) else open(fn, "rb").read()
             ri.ParseFromString(bin_str)
-            print "Found the .rand section, dumping into %s (will be removed at the end)" % C.METADATA_PATH
+            print("Found the .rand section, dumping into %s (will be removed at the end)" % C.METADATA_PATH)
             readOnly(sys.argv[1] + C.METADATA_POSTFIX + C.METADESC_POSTFIX, ri)
             os.remove(C.METADATA_PATH)
         except IOError:
-            print "The ELF binary does not contain a .rand section for metadata!"
+            print("The ELF binary does not contain a .rand section for metadata!")
     else:
-        print "Usage:", sys.argv[0], "<filename.shuffle.bin> or <ELF format with a .rand section>"
+        print("Usage:", sys.argv[0], "<filename.shuffle.bin> or <ELF format with a .rand section>")

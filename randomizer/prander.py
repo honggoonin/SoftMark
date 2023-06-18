@@ -2,7 +2,7 @@
 # Copyright(c) 2021, Honggoo Kang
 #####################################################################
 #  SoftMark: Software Watermarking via a Binary Function Relocation #
-#   (In the Annual Computer SEcurity Applications Conference 2021)  # 
+#   (In the Annual Computer Security Applications Conference 2021)  # 
 #                                                                   #
 #  Author: Honggoo Kang <honggoonin@korea.ac.kr>                    #
 #          Cybersecurity@Korea University                           #
@@ -111,14 +111,14 @@ def isValidArgs(args):
 
     input = args[0]
     if not os.path.exists(input):
-        print "The target file [%s] has not been found!", input
+        print("The target file [%s] has not been found!", input)
         return False
 
     return True
 
 if __name__ == '__main__':
 
-    print C.LOGO
+    print(C.LOGO)
     usage = "Usage: %prog [-b|-l|-r|-f|-s|-g|-a] <FilePath> (Use -h for help)"
     parser = optparse.OptionParser(usage=usage, version=C.VERSION)
 

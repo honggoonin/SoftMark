@@ -2,7 +2,7 @@
 # Copyright(c) 2021, Honggoo Kang
 #####################################################################
 #  SoftMark: Software Watermarking via a Binary Function Relocation #
-#   (In the Annual Computer SEcurity Applications Conference 2021)  # 
+#   (In the Annual Computer Security Applications Conference 2021)  # 
 #                                                                   #
 #  Author: Honggoo Kang <honggoonin@korea.ac.kr>                    #
 #          Cybersecurity@Korea University                           #
@@ -41,7 +41,7 @@ def getInfo(watermarkData_path, lookup):
         BBLcnt_List = list()
         Instcnt_List = list()
 
-        totLine = subprocess.check_output(['wc', '-l', str(pathlib.Path().absolute()) + os.sep + watermarkData_path]).split(' ')[0]
+        totLine = subprocess.check_output(['wc', '-l', str(pathlib.Path().absolute()) + os.sep + watermarkData_path]).decode('utf-8').split(' ')[0]
         
         with open(watermarkData_path, 'r') as file:
             infoBar = util.ProgressBar(int(totLine))

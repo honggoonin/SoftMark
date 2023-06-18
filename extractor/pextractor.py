@@ -85,19 +85,19 @@ def isValidArgs(args):
 
     input = args[0]
     if not os.path.exists(input):
-        print "The target file [%s] has not been found!", input
+        print("The target file [%s] has not been found!", input)
         return False
 
     input2 = args[1]
     if not os.path.exists(input2):
-        print "The watermark data file [%s] has not been found!", input2
+        print("The watermark data file [%s] has not been found!", input2)
         return False    
 
     return True
 
 if __name__ == '__main__':
 
-    print(C.LOGO)
+    print((C.LOGO))
     usage = "Usage: %prog [-g] <BinaryFilePath> <WatermarkDataFilePath> (Use -h for help)"
     #usage = "Usage: %prog [-g|-l] <BinaryFilePath> <WatermarkDataFilePath> (Use -h for help)"
 

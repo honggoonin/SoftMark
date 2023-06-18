@@ -293,10 +293,10 @@ class BasicBlocks(Functions):
 
     def show(self, level=1):
         for bbl in self.BasicBlockLayout:
-            print bbl
+            print(bbl)
             if level > 1:
                 for fixup in bbl.Fixups:
-                    print '\t', fixup
+                    print('\t', fixup)
 
     def _getObjBBCnt(self):
         ''' Compute how many BBs in a single object to move forward '''
@@ -572,20 +572,20 @@ class EssentialInfo():
     def processFixups(self, bar, RI, fixupsText, fixupsRodata, fixupsData, fixupsDataRel, fixupsInitArray):
         """ If a section contains fixups, generate fixup instances """
         if len(RI[C.DS_FIXUP_TEXT[0]]) > 0:
-            self.FixupsInText = Fixups(zip(*fixupsText), self.constructInfo, C.SEC_TEXT, bar)
+            self.FixupsInText = Fixups(list(zip(*fixupsText)), self.constructInfo, C.SEC_TEXT, bar)
 
         # ReorderOffset does not need to be adjusted other than .text
         if len(RI[C.DS_FIXUP_RODATA[0]]) > 0:
-            self.FixupsInRodata = Fixups(zip(*fixupsRodata), self.constructInfo, C.SEC_RODATA, bar)
+            self.FixupsInRodata = Fixups(list(zip(*fixupsRodata)), self.constructInfo, C.SEC_RODATA, bar)
 
         if len(RI[C.DS_FIXUP_DATA[0]]) > 0:
-            self.FixupsInData = Fixups(zip(*fixupsData), self.constructInfo, C.SEC_DATA, bar)
+            self.FixupsInData = Fixups(list(zip(*fixupsData)), self.constructInfo, C.SEC_DATA, bar)
 
         if len(RI[C.DS_FIXUP_DATAREL[0]]) > 0:
-            self.FixupsInDataRel = Fixups(zip(*fixupsDataRel), self.constructInfo, C.SEC_DATA_REL, bar)
+            self.FixupsInDataRel = Fixups(list(zip(*fixupsDataRel)), self.constructInfo, C.SEC_DATA_REL, bar)
 
         if len(RI[C.DS_FIXUP_INIT_ARR[0]]) > 0:
-            self.FixupsInInitArray = Fixups(zip(*fixupsInitArray), self.constructInfo, C.SEC_INIT_ARR, bar)
+            self.FixupsInInitArray = Fixups(list(zip(*fixupsInitArray)), self.constructInfo, C.SEC_INIT_ARR, bar)
 
     def __sanityCheck(self, RI, CI):
         """ Check if the provided data makes sense for transformation """

@@ -2,7 +2,7 @@
 # Copyright(c) 2021, Honggoo Kang
 #####################################################################
 #  SoftMark: Software Watermarking via a Binary Function Relocation #
-#   (In the Annual Computer SEcurity Applications Conference 2021)  # 
+#   (In the Annual Computer Security Applications Conference 2021)  # 
 #                                                                   #
 #  Author: Honggoo Kang <honggoonin@korea.ac.kr>                    #
 #          Cybersecurity@Korea University                           #
@@ -14,6 +14,7 @@
 import sys
 import logging
 import math
+from functools import reduce
 
 # http://stackoverflow.com/questions/3173320/text-progress-bar-in-the-console/27871113
 class ProgressBar(object):
@@ -75,7 +76,7 @@ class ColorFormatter(logging.Formatter):
     FORMAT = ("%(asctime)s [%(levelname)-18s] %(message)s "
               "($BOLD%(filename)s$RESET:%(lineno)d)")
 
-    BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
+    BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = list(range(8))
 
     RESET_SEQ = "\033[0m"
     COLOR_SEQ = "\033[1;%dm"
@@ -244,8 +245,8 @@ def getBBLsFromIDA():
         blocks_in_func = idaapi.FlowChart(idaapi.get_func(func))
         BBLs.append([BBL.startEA for BBL in blocks_in_func])
         sizes.append([BBL.endEA - BBL.startEA for BBL in blocks_in_func])
-    print [hex(x) for x in sorted(reduce(lambda x,y: x+y, BBLs))]
-    print sum(reduce(lambda x,y: x+y, sizes))
+    print([hex(x) for x in sorted(reduce(lambda x,y: x+y, BBLs))])
+    print(sum(reduce(lambda x,y: x+y, sizes)))
 
 def find_permutation(N, k): 
 	check = ['']*(N+1) 

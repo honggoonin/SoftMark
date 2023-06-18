@@ -2,7 +2,7 @@
 # Copyright(c) 2021, Honggoo Kang
 #####################################################################
 #  SoftMark: Software Watermarking via a Binary Function Relocation #
-#   (In the Annual Computer SEcurity Applications Conference 2021)  # 
+#   (In the Annual Computer Security Applications Conference 2021)  # 
 #                                                                   #
 #  Author: Honggoo Kang <honggoonin@korea.ac.kr>                    #
 #          Cybersecurity@Korea University                           #
@@ -23,6 +23,7 @@ import subprocess
 import util
 from capstone import *
 import r2pipe
+from functools import reduce
 
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'extractor'))
 import recognitionEngine as recog
@@ -236,14 +237,14 @@ class ReorderCore(EssentialInfo):
             MF = sorted(mergedFuncs)
 
             if len(MF) > 1:
-                MF = range(MF[0], MF[-1] + 1)
+                MF = list(range(MF[0], MF[-1] + 1))
 
                 # Handling the special case when the current function set has the intersection
                 #  of the previous set - should be combined together before further proceeding
                 if prevMFSet:
                     overlapped = len(set(MF).intersection(set(prevMFSet)))
                     if overlapped > 0:
-                        MF = range(min(min(MF), min(prevMFSet)), max(max(MF), max(prevMFSet)) + 1)
+                        MF = list(range(min(min(MF), min(prevMFSet)), max(max(MF), max(prevMFSet)) + 1))
                         funcLayout = [x for x in funcLayout if len(set(MF).intersection(x)) == 0]
                         funcLayout.append(MF)
                     else:
@@ -267,6 +268,7 @@ class ReorderCore(EssentialInfo):
             # [Note] Assume that compiler would generate functions close enough to refer from
             #        such BBLs that have short distance references (i.e., -128 <= d < 127)
             #        Otherwise this assumption could be problematic because of a skip-over function
+            #curFunc = self.EI.getFunction(funcLayout[-1][-1]).next
             curFunc = self.EI.getFunction(funcLayout[-1][-1]).next
 
         logging.debug("\tFunction Layout with Constraints: %s", funcLayout)
@@ -443,7 +445,7 @@ class ReorderCore(EssentialInfo):
         non_iCFT_size = list()
 
         file = open(directoryName + fileName)
-        totLine = subprocess.check_output(['wc', '-l', str(directoryName + fileName)]).split(' ')[0]
+        totLine = subprocess.check_output(['wc', '-l', str(directoryName + fileName)]).decode('utf-8').split(' ')[0]
 
         funcBar = util.ProgressBar(int(totLine))
         while True:
@@ -658,7 +660,7 @@ class ReorderCore(EssentialInfo):
 
             if BBLpattern in self.BBLs_cache:
                 for BBL in self.BBLs_cache[BBLpattern]:
-                    allBBLs.append((bbi, (long(BBL[0]), long(BBL[1]))))
+                    allBBLs.append((bbi, (int(BBL[0]), int(BBL[1]))))
 
             else:
                 cache_data = list()
@@ -693,7 +695,7 @@ class ReorderCore(EssentialInfo):
         # [Case] Exclude identical functions (considering shuffling)
         Candidates_num = list()
         for bbi in range(0, len(BBLspattern)):
-            cnt = len(filter(lambda bbl: bbl[0] == bbi, allBBLs))
+            cnt = len([bbl for bbl in allBBLs if bbl[0] == bbi])
             Candidates_num.append((bbi, cnt))
         
         Candidates_num.append((bbi, cnt))

@@ -2,7 +2,7 @@
 # Copyright(c) 2021, Honggoo Kang
 #####################################################################
 #  SoftMark: Software Watermarking via a Binary Function Relocation #
-#   (In the Annual Computer SEcurity Applications Conference 2021)  # 
+#   (In the Annual Computer Security Applications Conference 2021)  # 
 #                                                                   #
 #  Author: Honggoo Kang <honggoonin@korea.ac.kr>                    #
 #          Cybersecurity@Korea University                           #
@@ -14,7 +14,7 @@
 from distutils import spawn
 
 def enum(*seq, **named):
-    enums = dict(zip(seq, range(len(seq))), **named)
+    enums = dict(list(zip(seq, list(range(len(seq))))), **named)
     return type('Enum', (), enums)
 
 Formats = enum('CHAR', 'UCHAR', 'SHORT', 'USHORT',

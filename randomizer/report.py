@@ -11,6 +11,7 @@
 
 import logging
 import math
+from functools import reduce
 class Report():
     def __init__(self):
         # Randomization option
